@@ -30,6 +30,12 @@ const Events: NextPage = () => {
     fromBlock: 0n,
   });
 
+  const { data: approvedEvents, isLoading: isApprovedEventsLoading } = useScaffoldEventHistory({
+    contractName: "Balloons",
+    eventName: "Approval",
+    fromBlock: 0n,
+  });
+
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-10">
@@ -203,6 +209,52 @@ const Events: NextPage = () => {
                           <td>{parseFloat(formatEther(event.args.ethOutput || 0n)).toFixed(4)}</td>
                           <td>{parseFloat(formatEther(event.args.tokensOutput || 0n)).toFixed(4)}</td>
                           <td>{parseFloat(formatEther(event.args.liquidityWithdrawn || 0n)).toFixed(4)}</td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {isApprovedEventsLoading ? (
+          <div className="flex justify-center items-center mt-10">
+            <span className="loading loading-spinner loading-lg"></span>
+          </div>
+        ) : (
+          <div className="mt-8 mb-8">
+            <div className="text-center mb-4">
+              <span className="block text-2xl font-bold">Approved Events</span>
+            </div>
+            <div className="overflow-x-auto shadow-lg mb-5">
+              <table className="table table-zebra w-full">
+                <thead>
+                  <tr>
+                    <th className="bg-primary">Owner</th>
+                    <th className="bg-primary">Spender</th>
+                    <th className="bg-primary">Amount of ETH Approved</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {!approvedEvents || approvedEvents.length === 0 ? (
+                    <tr>
+                      <td colSpan={2} className="text-center">
+                        No events found
+                      </td>
+                    </tr>
+                  ) : (
+                    approvedEvents?.map((event, index) => {
+                      return (
+                        <tr key={index}>
+                          <td className="text-center">
+                            <Address address={event.args.owner} />
+                          </td>
+                          <td className="text-center">
+                            <Address address={event.args.spender} />
+                          </td>
+                          <td>{parseFloat(formatEther(event.args.value || 0n)).toFixed(4)}</td>
                         </tr>
                       );
                     })
