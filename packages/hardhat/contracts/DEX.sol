@@ -113,6 +113,8 @@ contract DEX {
         require(token.transfer(msg.sender, tokenOutput), "DEX: ethToToken - transfer failed");
         emit EthToTokenSwap(msg.sender, tokenOutput, ethInput);
 
+        totalLiquidity = ethReserves + ethInput;
+
         return tokenOutput; 
     }
 
@@ -129,6 +131,8 @@ contract DEX {
         (bool sent, ) = payable(msg.sender).call{value: ethOutput}("");
         require(sent, "DEX: tokenToEth - ETH transfer failed");
         emit TokenToEthSwap(msg.sender, tokenInput, ethOutput);
+
+        totalLiquidity = ethReserves - ethOutput;
 
         return ethOutput;
     }
